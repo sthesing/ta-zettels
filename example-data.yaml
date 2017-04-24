@@ -1,0 +1,42 @@
+---
+files:
+  file1.md:
+    author:
+    - affiliation: University of Somewhere
+      name: John Doe
+    tags:
+    - example
+    - first
+    - test
+    targets:
+    - file2.md
+    - file3.md
+    title: File 1
+    followups:
+    - file2.md
+    - file3.md
+  file3.md:
+    author:
+    - affiliation: University of Somewhere
+      name: John Doe
+    tags:
+    - example
+    - third
+    targets:
+    - file1.md
+    title: File 3
+    followups: {}
+  file2.md:
+    author:
+    - affiliation: University of Somewhere
+      name: John Doe
+    tags:
+    - example
+    - second
+    targets:
+    - http://example.com
+    - file3.md
+    title: File 2
+    followups: {}
+timestamp: 1453194816.4917
+...
