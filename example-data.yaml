@@ -1,9 +1,43 @@
 ---
 files:
+  subdir/file4.md:
+    targets:
+    - file1.md
+    author:
+    - name: John Doe
+      affiliation: University of Somewhere
+    tags:
+    - example
+    - fourth
+    followups:
+    - file1.md
+  file3.md:
+    author:
+    - name: John Doe
+      affiliation: University of Somewhere
+    tags:
+    - example
+    - third
+    targets:
+    - file1.md
+    title: File 3
+    followups: {}
+  file2.md:
+    author:
+    - name: John Doe
+      affiliation: University of Somewhere
+    tags:
+    - example
+    - second
+    targets:
+    - http://example.com
+    - file3.md
+    title: File 2
+    followups: {}
   file1.md:
     author:
-    - affiliation: University of Somewhere
-      name: John Doe
+    - name: John Doe
+      affiliation: University of Somewhere
     tags:
     - example
     - first
@@ -15,28 +49,5 @@ files:
     followups:
     - file2.md
     - file3.md
-  file3.md:
-    author:
-    - affiliation: University of Somewhere
-      name: John Doe
-    tags:
-    - example
-    - third
-    targets:
-    - file1.md
-    title: File 3
-    followups: {}
-  file2.md:
-    author:
-    - affiliation: University of Somewhere
-      name: John Doe
-    tags:
-    - example
-    - second
-    targets:
-    - http://example.com
-    - file3.md
-    title: File 2
-    followups: {}
 timestamp: 1453194816.4917
 ...
