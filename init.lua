@@ -1,27 +1,12 @@
 -- Libraries
---local yaml = require("zettels.zettel_handler")
---local basedir = _USERHOME .. '/modules/zettels/examples/'
-local basedir = ""
-local columns = {'Title', 'File', 'Tags'}
-local examples = {'File 1', 'file1.md', 'example, first, test',
-                  'File 2', 'file2.md', 'example, second',
-                  'File 3', 'file3.md', 'example, third',
-                  'File 4', 'subdir/file4.md', 'example, fourth'}
+local zh = require("zettels.zettel_handler")
 
---- Little helper used in debugging
--- Prints out a table's contents with indentation
-local function tprint (tbl, indent)
-  if not indent then indent = 0 end
-  for k, v in pairs(tbl) do
-    formatting = string.rep("  ", indent) .. k .. ": "
-    if type(v) == "table" then
-      ui.print(formatting)
-      tprint(v, indent+1)
-    else
-      ui.print(formatting .. tostring(v))
-    end
-  end
-end
+-- Just dummies, they get set by enable()
+local basedir = nil
+local index   = nil
+
+-- Columns for Textadept's filteredlist dialog
+local columns = {'Title', 'File', 'Tags'}
 
 --- Little helper to find the index of a column, e.g. 'Title'.
 -- It's needed 
@@ -38,26 +23,68 @@ local function get_index_of(t, s)
     end    
 end
 
+--- Shows the index or a part of it in Textadepts filteredlist dialog and opens
+--the selected file
+local function open_from_filteredlist(zettels,
+                                      title, 
+                                      columns,
+                                      search_column, 
+                                      output_column)
+    local button_or_exit, selection = ui.dialogs.filteredlist{
+                            title = title,
+                            columns = columns,
+                            search_column = search_column,
+                            items = zh.lineup(zettels),
+                            select_multiple=true, 
+                            string_output=true,
+                            output_column=get_index_of(columns, 'File')}
+                            
+    if button_or_exit ~= "delete" then
+        for i, zettel in pairs(selection) do
+            io.open_file(basedir .. zettel)
+        end
+    end
+end
+
 --- Search operations on the Zettel index
 -- It opens the selected file(s) in Textadept. 
 -- @param searchcolumns String defining the column that is to be searched. Must be one of 
 --                      the index' column entries, e.g. 'Title' or 'Tags'. Default ist 'Title'
 local function search_zettel(searchcolumn)
-    searchcolumn = searchcolumn or 'Title'
+    local searchcolumn = searchcolumn or 'Title'
     
-    -- The dialog box needs the searchcolumn by its number, so let's find it.
-    columnnumber = get_index_of(columns, searchcolumn)
+    -- The dialog box needs the searchcolumn by its number, so let's find it 
+    -- by using get_index_of(columns, searchcolumn)
+    open_from_filteredlist(index.files, 
+                           'Search Zettel by ' .. searchcolumn,
+                           columns,
+                           get_index_of(columns, searchcolumn))
+end
+
+local function show_items(index, absolutepath, f, parttitle)
+    --[[
+    TODO
+    - Handle files that are not in or under basedir
+    - There must be a cleaner way to convert between relative and absolute
+      paths
+    ]]
+    local relpath = string.gsub(absolutepath, basedir, "")
+    
+    local items = {}
+    for _, file in pairs(f(index, relpath)) do
+        items[file] = index.files[file]
+    end
         
-    -- Call the dialog
-    button_or_exit, zettels = ui.dialogs.filteredlist{
-                            title = 'Search Zettel by ' .. searchcolumn, 
-                            columns = columns,
-                            search_column = columnnumber,
-                            items = examples, 
-                            select_multiple=true, 
-                            string_output=true,
-                            output_column=get_index_of(columns, 'File')}
-    
+    local button_or_exit, zettels = ui.dialogs.filteredlist{
+                              title         = parttitle .. relpath,
+                              columns       = columns,
+                              search_column = get_index_of(columns, 'Title'),
+                              items         = zh.lineup(items),
+                              select_multiple=true, 
+                              string_output=true,
+                              output_column=get_index_of(columns, 'File')
+                            }
+
     if button_or_exit ~= "delete" then
         for i, zettel in pairs(zettels) do
             io.open_file(basedir .. zettel)
@@ -65,13 +92,12 @@ local function search_zettel(searchcolumn)
     end
 end
 
-local function search_fulltext()
-    --TODO
-    ui.print("search_fulltext is not Implemented, yet")
+local function show_followups(index, absolutepath)
+    show_items(index, absolutepath, zh.get_followups, 'Followups of ')
 end
 
-local function testoutstuff()
-    ui.print("Testing stuff out")
+local function show_targets(index, absolutepath)
+    show_items(index, absolutepath, zh.get_targets, 'Targets of ')
 end
 
 -- Define Zettels Menu
@@ -80,23 +106,28 @@ local zettels_menu = {
   {'Search by Title',       function() search_zettel('Title') end},
   {'Search by Filename',    function() search_zettel('File') end},
   {'Search by Tag',         function() search_zettel('Tags') end},
-  {'Search full text',      function() search_fulltext() end},
-  {'Test out Stuff', function() testoutstuff()  end}
+  --{'Search full text',      function() search_fulltext() end},
 }
 
 -- Define Zettels Context Menu
 local zettels_context_menu = {
     title = 'Zettels',
-    {'Test out Stuff', function() testoutstuff() end}
+    {'Show followups', function() show_followups(index, buffer.filename) end},
+    {'Show targets',   function() show_targets(index, buffer.filename) end},
 }
 
 -- Enable the Module
-local function enable(zettel_dir)
+local function enable(zettel_dir, indexfile)
     if not zettel_dir then
         basedir = _USERHOME .. '/modules/zettels/examples/'
     else
         basedir = zettel_dir
     end
+    -- Get the index
+    if not indexfile then
+        indexfile = basedir .. "../" .. "example-data.yaml"
+    end
+    index = zh.loadfile(indexfile)
     -- Activate Zettels Menu
     local menu = textadept.menu.menubar
     menu[#menu + 1] = zettels_menu

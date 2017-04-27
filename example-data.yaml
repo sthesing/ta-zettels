@@ -11,6 +11,7 @@ files:
     - fourth
     followups:
     - file1.md
+    title: File 4
   file3.md:
     author:
     - name: John Doe
