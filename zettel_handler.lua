@@ -61,7 +61,9 @@ local function make_tag_string(tags)
             s = s .. ", " .. tostring(v)
         end
     end
-    return s
+    -- if tags was empty, s is still nil. But in that case, we want to return
+    -- an empty string.
+    return s or ""
 end
 
 --- Lines up structured data from yaml in a table format used by Textadept's ui.dialogs.filteredlist function
