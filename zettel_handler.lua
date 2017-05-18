@@ -7,9 +7,12 @@ for Textadept.
 -- ###########################################################################
 -- Check for lyaml
 -- ###########################################################################
+--local lyaml = require "yaml.lyaml"
+
 local lyaml = lyaml
 -- If it's not available globally, the local lyaml will now be nil
 -- In that case, we look for other options
+
 if not lyaml then
     -- maybe Textadept's yaml-Module is present, which includes lyaml
     if pcall(require, "yaml.lyaml") then
@@ -22,9 +25,10 @@ if not lyaml then
     -- if that isn't the case, either, Textadept will complain at startup.
 end
 
--- ###########################################################################
+--###########################################################################
 -- Wrappers around lyaml
 -- ###########################################################################
+
 local function load(content)
     return lyaml.load(content)
 end
