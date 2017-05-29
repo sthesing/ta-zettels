@@ -2,8 +2,9 @@
 local zh = require("zettels.zettel_handler")
 
 -- Just dummies, they get set by enable()
-local basedir = nil
-local index   = nil
+local basedir    = nil
+local index      = nil
+local index_path = nil
 
 -- Columns for Textadept's filteredlist dialog
 local columns = {'Title', 'File', 'Tags'}
@@ -100,13 +101,17 @@ local function show_targets(index, absolutepath)
     show_items(index, absolutepath, zh.get_targets, 'Targets of ')
 end
 
+local function refresh_index()
+    index = zh.loadfile(index_path)
+end
+
 -- Define Zettels Menu
 local zettels_menu = {
   title = 'Zettels',
   {'Search by Title',       function() search_zettel('Title') end},
   {'Search by Filename',    function() search_zettel('File') end},
   {'Search by Tag',         function() search_zettel('Tags') end},
-  --{'Search full text',      function() search_fulltext() end},
+  {'Refresh index',         function() refresh_index() end},
 }
 
 -- Define Zettels Context Menu
@@ -118,6 +123,7 @@ local zettels_context_menu = {
 
 -- Enable the Module
 local function enable(zettel_dir, indexfile)
+    -- set three module-wide variables: basdir, index_path and index
     if not zettel_dir then
         basedir = _USERHOME .. '/modules/zettels/examples/'
     else
@@ -127,7 +133,11 @@ local function enable(zettel_dir, indexfile)
     if not indexfile then
         indexfile = basedir .. "../" .. "example-data.yaml"
     end
-    index = zh.loadfile(indexfile)
+
+    index_path = indexfile
+    -- index variable is set by refresh_index
+    refresh_index()
+    
     -- Activate Zettels Menu
     local menu = textadept.menu.menubar
     menu[#menu + 1] = zettels_menu
