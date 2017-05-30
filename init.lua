@@ -102,6 +102,12 @@ local function show_targets(index, absolutepath)
 end
 
 local function refresh_index()
+    --call zettels to update the index
+    local status_code = os.execute("zettels")
+    if not status_code then
+        ui.print("Something went wrong when executing the system command 'zettels'")
+    end
+    --reload it
     index = zh.loadfile(index_path)
 end
 

@@ -42,6 +42,10 @@ zettels.enable(os.getenv("HOME") .. '/Dokumente/Zettelkasten/', os.getenv("HOME"
 
 - A new menu entry "Zettels" is added to Textadept, it should be rather 
   self-explanatory.
+- If you select the "Refresh index" - option, the module will try to execute
+"zettels" on your system. If it isn't installed, the module will still try to 
+refresh the index from the YAML-file. Only you know if that will do any good, 
+though.
 - If you have a zettel opened in Textadept, right-click and select the 
   corresponding entry from the context-menu to show (and later open) the link 
   targets or follow-ups of the current zettel.
