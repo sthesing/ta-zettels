@@ -158,7 +158,8 @@ end
 --- Public Interface
 --- ##########################################################################
 local M = {
-    enable = enable
+    enable = enable,
+    _VERSION = '0.2.0',
 }
 
 return M
