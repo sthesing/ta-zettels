@@ -8,3 +8,14 @@ followups: ['../file1.md']
 ...
 
 This is points to [File 1 in the root directory](../file1.md)
+
+Apart from that, it only has unneccessary UTF-8 art:
+```
+  ╔═══════╗ 
+┌─╨───────╨─┐
+└┬─────────┬┘
+ │  ╭───╮  │
+ │  ╰───╯  │
+ │         │
+ └─────────┘
+```
