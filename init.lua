@@ -1,5 +1,6 @@
 -- Libraries
 local zh = require("zettels.zettel_handler")
+local path = require("path")
 
 -- Just dummies, they get set by enable()
 local basedir    = nil
@@ -65,15 +66,19 @@ end
 local function show_items(index, absolutepath, f, parttitle)
     --[[
     TODO
-    - Handle files that are not in or under basedir
-    - There must be a cleaner way to convert between relative and absolute
-      paths
+    - We might still be in trouble if the path contains "../"'
     ]]
+    
+    -- To be sure that absolutepath is really a full and normalized path
+    absolutepath = path.fullpath(absolutepath)
+    
     local relpath = string.gsub(absolutepath, basedir, "")
+    local reldir = path.dirname(relpath)
+    
     
     local items = {}
     for _, file in pairs(f(index, relpath)) do
-        items[file] = index.files[file]
+        items[path.join(reldir, file)] = index.files[path.join(reldir, file)]
     end
         
     local button_or_exit, zettels = ui.dialogs.filteredlist{
@@ -95,6 +100,7 @@ end
 
 local function show_followups(index, absolutepath)
     show_items(index, absolutepath, zh.get_followups, 'Followups of ')
+    
 end
 
 local function show_targets(index, absolutepath)

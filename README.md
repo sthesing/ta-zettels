@@ -63,3 +63,5 @@ though.
   The easiest way is to use Textadept's own YAML-Module. That comes with
   a working installation of lyaml. ta-zettels will work with it, out of the
   box.
+- [lua-path](https://github.com/moteus/lua-path) - unpack the contents of 
+the folder lua into your `modules` directory.
