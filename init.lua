@@ -109,7 +109,7 @@ end
 
 local function refresh_index()
     --call zettels to update the index
-    local status_code = os.execute("zettels")
+    local status_code = os.execute("zettels -su")
     if not status_code then
         ui.print("Something went wrong when executing the system command 'zettels'")
     end
@@ -165,7 +165,7 @@ end
 --- ##########################################################################
 local M = {
     enable = enable,
-    _VERSION = '0.2.0',
+    _VERSION = '0.3.0',
 }
 
 return M
