@@ -165,7 +165,8 @@ end
 --- ##########################################################################
 local M = {
     enable = enable,
-    _VERSION = '0.3.0',
+    _VERSION = '0.4.0',
+    search_zettel = search_zettel,
 }
 
 return M
