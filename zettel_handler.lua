@@ -108,6 +108,23 @@ local function get_targets(index, zettel)
     return index.files[zettel].targets
 end
 
+--- Returns the sources linking to a given Zettel
+-- @zettel_absolute String containing the absolute file path of the Zettel
+local function get_sources(zettel_absolute)
+    local filehandle = io.popen("zettels -i " .. zettel_absolute)
+    local sources = {}
+        
+    if filehandle then
+        for line in filehandle:lines() do
+            sources[#sources+1] = line 
+        end
+        filehandle:close()
+    end
+    
+    return sources
+end
+
+
 --- Returns the tags of a given Zettel
 -- @index  Table containing the index.
 -- @zettel String containing the file path of the Zettel relative to the 
@@ -115,6 +132,7 @@ end
 local function get_tags(index, zettel)
     return index.files[zettel].tags
 end
+
 
 -- ###########################################################################
 -- Public interface
@@ -127,6 +145,7 @@ M = {
     lineup = lineup,
     get_followups = get_followups,
     get_targets = get_targets,
+    get_sources = get_sources,
 }
 
 return M

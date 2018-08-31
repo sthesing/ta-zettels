@@ -4,8 +4,9 @@ local path = require("path")
 
 -- Just dummies, they get set by enable()
 local basedir    = nil
-local index      = nil
 local index_path = nil
+-- Another dummy, gest set by refresh_index(), which is initially called by enable()
+local index      = nil
 
 -- Columns for Textadept's filteredlist dialog
 local columns = {'Title', 'File', 'Tags'}
@@ -107,6 +108,37 @@ local function show_targets(index, absolutepath)
     show_items(index, absolutepath, zh.get_targets, 'Targets of ')
 end
 
+local function show_sources(index, absolutepath)
+    local sources = zh.get_sources(absolutepath)
+    
+    absolutepath = path.fullpath(absolutepath)
+    local relpath = string.gsub(absolutepath, basedir, "")
+    local reldir = path.dirname(relpath)
+        
+        
+    local items = {}
+    for _, file in pairs(sources) do
+        items[file] = index.files[file]
+    end
+    
+    local button_or_exit, zettels = ui.dialogs.filteredlist{
+        title         = 'Sources of ' .. relpath,
+        columns       = columns,
+        search_column = get_index_of(columns, 'Title'),
+        items         = zh.lineup(items),
+        select_multiple=true, 
+        string_output=true,
+        output_column=get_index_of(columns, 'File')
+        }
+    
+        if button_or_exit ~= "delete" then
+            for i, zettel in pairs(zettels) do
+                io.open_file(basedir .. zettel)
+            end
+    end
+    
+end
+
 local function refresh_index()
     --call zettels to update the index
     local status_code = os.execute("zettels -su")
@@ -129,8 +161,12 @@ local zettels_menu = {
 -- Define Zettels Context Menu
 local zettels_context_menu = {
     title = 'Zettels',
-    {'Show followups', function() show_followups(index, buffer.filename) end},
-    {'Show targets',   function() show_targets(index, buffer.filename) end},
+    {'Open followups', function() show_followups(index, buffer.filename) end},
+    {'Open targets',   function() show_targets(index, buffer.filename) end},
+    {'Open sources', function() show_sources(index, buffer.filename) end},
+    --{'Open mother zettel', function() TODO end},
+    --{'Link to other zettel', function() TODO end},
+    --{'Copy link to self to clipboard', function() TODO end},
 }
 
 -- Enable the Module
