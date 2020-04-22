@@ -100,6 +100,23 @@ local function get_followups(index, zettel)
     return index.files[zettel].followups
 end
 
+-- Print contents of `tbl`, with indentation.
+-- `indent` sets the initial level of indentation.
+function tprint (tbl, indent)
+    if not indent then indent = 0 end
+    for k, v in pairs(tbl) do
+        formatting = string.rep("  ", indent) .. k .. ": "
+        if type(v) == "table" then
+            ui.print(formatting)
+            tprint(v, indent+1)
+        else
+            ui.print(formatting .. tostring(v))
+        end
+    end
+end
+
+
+
 --- Returns the targets of a given Zettel
 -- @index  Table containing the index.
 -- @zettel String containing the file path of the Zettel relative to the 

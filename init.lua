@@ -64,6 +64,10 @@ local function search_zettel(searchcolumn)
                            get_index_of(columns, searchcolumn))
 end
 
+local function search_followups(filename)
+    show_followups(index, filename)
+end
+
 local function show_items(index, absolutepath, f, parttitle)
     --[[
     TODO
@@ -201,8 +205,9 @@ end
 --- ##########################################################################
 local M = {
     enable = enable,
-    _VERSION = '0.4.0',
+    _VERSION = '0.5.0',
     search_zettel = search_zettel,
+    search_followups = search_followups,
 }
 
 return M
