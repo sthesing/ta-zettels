@@ -1,8 +1,9 @@
 # Move notice
 
 Like [Zettels](https://gitlab.com/sthesing/zettels), the Textadept module for
-it has been rewritten and its repository has moved, too. Find it now at:
-[ta-zettels-ng](https://gitlab.com/sthesing/ta-zettels-ng)
+it has been rewritten and its repository has moved, too. 
+
+- **New repository: [ta-zettels-ng](https://gitlab.com/sthesing/ta-zettels-ng)**
 
 # ta-zettels
 
